@@ -1,6 +1,6 @@
 //
 // 応用プログラミング 第9,10回 自由課題 (ap0901.js)
-// G38400-2023 拓殖太郎
+// G38489-2023 三浦悠樹
 //
 "use strict"; // 厳格モード
 
@@ -38,6 +38,20 @@ function init() {
     document.getElementById("output").appendChild(renderer.domElement);
 
   // 描画処理
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
 
   // 描画関数
   function render() {
