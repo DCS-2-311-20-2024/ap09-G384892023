@@ -7,12 +7,14 @@
 // ライブラリをモジュールとして読み込む
 import * as THREE from "three";
 import { GUI } from "ili-gui";
+import { MeshPhongMaterial } from 'three';
 
 // ３Ｄページ作成関数の定義
 function init() {
   // 制御変数の定義
   const param = {
     axes: true, // 座標軸
+    
   };
 
   // GUIコントローラの設定
@@ -29,28 +31,112 @@ function init() {
   // カメラの作成
   const camera = new THREE.PerspectiveCamera(
     50, window.innerWidth/window.innerHeight, 0.1, 1000);
-  camera.position.set(1,2,3);
+  camera.position.set(0,0,20);
   camera.lookAt(0,0,0);
 
   // レンダラの設定
   const renderer = new THREE.WebGLRenderer();
   renderer.setSize(window.innerWidth, innerHeight);
+  renderer.setClearColor(0x305070);
     document.getElementById("output").appendChild(renderer.domElement);
 
+   // 光源の設定
+   const light = new THREE.SpotLight(0xffffff, 1000);
+   light.position.set(0, -5, 20);
+   scene.add(light);
+    
+  //内部作成 
+  
+  //壁
+  const wallside = 20;
+  const wallupdown = 15;
+  const wallwidth = 0.5;
+  const wallhigh = 1;
+  {
+  const wall = new THREE.Group();
+
+  const WallSide = new THREE.Mesh(
+    new THREE.BoxGeometry(wallwidth, wallside, wallhigh),
+    new THREE.MeshPhongMaterial({color: 0xB3B3B3})
+  )
+  const WallSideR = WallSide.clone();
+  WallSideR.position.x = wallupdown / 2 + wallwidth / 2;
+  wall.add(WallSideR);
+
+  const WallSideL = WallSide.clone();
+  WallSideL.position.x = - wallupdown / 2 - wallwidth / 2;
+  wall.add(WallSideL);
+  
+  const WallUpDown = new THREE.Mesh(
+    new THREE.BoxGeometry(wallupdown, wallwidth, wallhigh),
+    new THREE.MeshPhongMaterial({color: 0xB3B3B3})
+  )
+  const WallDown = WallUpDown.clone();
+  WallDown.position.y = wallside / 2 - wallwidth / 2;
+  wall.add(WallDown);
+
+  const WallUp = WallUpDown.clone();
+  WallUp.position.y = - wallside / 2 + wallwidth / 2;
+  wall.add(WallUp);
+
+  scene.add(wall);
+  }
+
+  //玉1
+  const nSeg = 24;
+  const ballR = 0.3;
+  /*
+  {
+    const ball = new THREE.Mesh(
+      new THREE.SphereGeometry(ballR, nSeg, nSeg),
+      new THREE.MeshPhongMaterial({ color: 0xff0038 })
+    );
+    scene.add(ball);
+
+  }*/
+
+
+
+
+
+
+
+
+
+
+
+  //当たり判定の確認
+  {
+  const player =new THREE.Mesh(
+    new THREE.SphereGeometry(ballR, nSeg, nSeg),
+    new THREE.MeshPhongMaterial({ color: 0xff0038 })
+  );
+  player.position.y = -6;
+  scene.add(player);
+
+
+  const plane = new THREE.Plane(new THREE.Vector3(0, 0, 1), 0);
+  const mouse = new THREE.Vector2();
+  const raycaster = new THREE.Raycaster();
+  const intersects = new THREE.Vector3();
+    function playerMove(event) {
+      mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+      raycaster.setFromCamera(mouse, camera);
+      raycaster.ray.intersectPlane(plane, intersects);
+      const offset = wallupdown / 2 - wallwidth / 2 - ballR;
+      if(intersects.x < -offset){
+        intersects.x = -offset;
+      }else if(intersects.x > offset){
+        intersects.x = offset;
+      }
+      player.position.x = intersects.x;
+  
+    }
+    window.addEventListener("mousemove", playerMove, false);
+    
+  }
+
   // 描画処理
-
-
-
-
-
-
-
-
-
-
-
-
-
   
 
   // 描画関数
