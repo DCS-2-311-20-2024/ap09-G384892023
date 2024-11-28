@@ -14,12 +14,15 @@ function init() {
   // 制御変数の定義
   const param = {
     axes: true, // 座標軸
+    rotation: 2,
     
   };
 
   // GUIコントローラの設定
   const gui = new GUI();
   gui.add(param, "axes").name("座標軸");
+  gui.add(param, "rotation").name("座標軸");
+
 
   // シーン作成
   const scene = new THREE.Scene();
@@ -83,22 +86,19 @@ function init() {
   }
 
   //玉1
-  const nSeg = 24;
-  const ballR = 0.3;
-  /*
+
   {
-    const ball = new THREE.Mesh(
-      new THREE.SphereGeometry(ballR, nSeg, nSeg),
-      new THREE.MeshPhongMaterial({ color: 0xff0038 })
+
+    const boss = new THREE.Mesh(
+      new THREE.IcosahedronGeometry(1,0),
+      new THREE.MeshPhongMaterial({ color: 0xffa0ff })
     );
-    scene.add(ball);
+    boss.position.y = 4;
+    boss.rotation.x += 0.1 * param.rotation;
+    boss.rotation.y += 0.4 * param.rotation;
+    scene.add(boss);
 
-  }*/
-
-
-
-
-
+  }
 
 
 
@@ -107,6 +107,9 @@ function init() {
 
   //当たり判定の確認
   {
+  const nSeg = 24;
+  const ballR = 0.3;
+
   const player =new THREE.Mesh(
     new THREE.SphereGeometry(ballR, nSeg, nSeg),
     new THREE.MeshPhongMaterial({ color: 0xff0038 })
@@ -119,20 +122,33 @@ function init() {
   const mouse = new THREE.Vector2();
   const raycaster = new THREE.Raycaster();
   const intersects = new THREE.Vector3();
+
     function playerMove(event) {
       mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+      mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
       raycaster.setFromCamera(mouse, camera);
       raycaster.ray.intersectPlane(plane, intersects);
-      const offset = wallupdown / 2 - wallwidth / 2 - ballR;
-      if(intersects.x < -offset){
-        intersects.x = -offset;
-      }else if(intersects.x > offset){
-        intersects.x = offset;
+
+      const offsetX = wallupdown / 2  - ballR;
+      if(intersects.x < -offsetX){
+        intersects.x = -offsetX;
+      }else if(intersects.x > offsetX){
+        intersects.x = offsetX;
       }
+
+      const offsetY = wallside / 2 - wallwidth / 2 - ballR * 2;
+      if (intersects.y < -offsetY) {
+        intersects.y = -offsetY;
+      } else if (intersects.y > offsetY) {
+        intersects.y = offsetY;
+      }
+
       player.position.x = intersects.x;
-  
+      player.position.y = intersects.y;
     }
+
     window.addEventListener("mousemove", playerMove, false);
+
     
   }
 
