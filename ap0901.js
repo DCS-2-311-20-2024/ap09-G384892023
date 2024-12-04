@@ -14,14 +14,15 @@ function init() {
   // 制御変数の定義
   const param = {
     axes: true, // 座標軸
-    rotation: 2,
+    rotation: 1,
     
   };
 
   // GUIコントローラの設定
   const gui = new GUI();
   gui.add(param, "axes").name("座標軸");
-  gui.add(param, "rotation").name("座標軸");
+  gui.add(param, "rotation", -10, 10);
+  
 
 
   // シーン作成
@@ -55,7 +56,7 @@ function init() {
   const wallupdown = 15;
   const wallwidth = 0.5;
   const wallhigh = 1;
-  {
+  
   const wall = new THREE.Group();
 
   const WallSide = new THREE.Mesh(
@@ -83,30 +84,33 @@ function init() {
   wall.add(WallUp);
 
   scene.add(wall);
-  }
+  
 
-  //玉1
-
-  {
-
+  //ボス 
     const boss = new THREE.Mesh(
       new THREE.IcosahedronGeometry(1,0),
       new THREE.MeshPhongMaterial({ color: 0xffa0ff })
     );
     boss.position.y = 4;
-    boss.rotation.x += 0.1 * param.rotation;
-    boss.rotation.y += 0.4 * param.rotation;
     scene.add(boss);
+  
+  //玉1
 
-  }
+  const Eattack = [];
+  for(let n = 0; n < 5; n++){
+    Eattack.push(0);
+    Eattack [n] = new THREE.Mesh(
+      new THREE.ConeGeometry(0.3, 1, 4),
+      new THREE.MeshPhongMaterial({ color: 0xaa40ff })
+    );
+    Eattack [n].position.y = 1;
+    scene.add(Eattack[n]);
+  };
 
 
 
-
-
-
-  //当たり判定の確認
-  {
+  //player当たり判定の確認
+  
   const nSeg = 24;
   const ballR = 0.3;
 
@@ -147,13 +151,59 @@ function init() {
       player.position.y = intersects.y;
     }
 
-    window.addEventListener("mousemove", playerMove, false);
+  window.addEventListener("mousemove", playerMove, false);
 
     
+  
+
+  //攻撃
+  const PattackR = 0.2;
+  const Pattack = [];
+  for(let n = 0; n < 5; n++){
+    Pattack.push(0);
+    Pattack [n] = new THREE.Mesh(
+      new THREE.SphereGeometry(PattackR, nSeg, nSeg),
+      new THREE.MeshPhongMaterial({ color: 0xaa40ff })
+    );
+    Pattack [n].position.x = player.position.x;
+    Pattack [n].position.y = player.position.y + 2;
+    scene.add(Pattack[n]);
+  };
+
+  // キーが押されたときの処理
+  document.addEventListener('keydown', (event) => {
+    if (event.key === ' ') { // スペースキーが押されたとき
+        shoot(); 
+    }
+  });
+
+  // キーが離されたときの処理
+  document.addEventListener('keyup', (event) => {
+    if (event.key === ' ') { // スペースキーが離されたとき
+    }
+  });
+
+  let count = 0;
+  let time = 0;
+
+  function shoot(){
+    time += 1;
+    console.log("shoot");
+    if(time%2 == 0){
+      Pattack [count].position.x = player.position.x;
+      Pattack [count].position.y = player.position.y + 2;     
+      count += 1;
+      if(count == 5){
+        count = 0;
+      }   
+    }
   }
+  
+
 
   // 描画処理
   
+
 
   // 描画関数
   function render() {
@@ -161,8 +211,21 @@ function init() {
     axes.visible = param.axes;
     // 描画
     renderer.render(scene, camera);
+
+    boss.rotation.x += 0.01 * param.rotation;
+    boss.rotation.y += 0.04 * param.rotation; 
+    
+    for(let n = 0; n < 5; n ++){
+      Pattack [n].position.y += 0.4;
+    }
+    
+
+    
+
     // 次のフレームでの描画要請
-    requestAnimationFrame(render);
+    requestAnimationFrame(render); 
+
+    
   }
 
   // 描画開始
