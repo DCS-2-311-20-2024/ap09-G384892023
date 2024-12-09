@@ -92,7 +92,7 @@ function init() {
       new THREE.IcosahedronGeometry(1,0),
       new THREE.MeshPhongMaterial({ color: 0xffa0ff })
     );
-    boss.position.y = 4;
+    boss.position.y = 6;
     scene.add(boss);
   
   //玉1
@@ -217,6 +217,7 @@ function init() {
   let bossCount1 = 0;
   let bossCount2 = 0;
   let angle = 0;
+  let angle2 = 0;
   let rad = [];
   let wallcheck = [];
   let rad2 = 270;
@@ -248,7 +249,7 @@ function init() {
       Eattack [bossCount1].rotation.z += rad[bossCount1];
       wallcheck[bossCount1] = 0;
       Eattack [bossCount1].position.x = boss.position.x;
-      Eattack [bossCount1].position.y = boss.position.y + 2;  
+      Eattack [bossCount1].position.y = boss.position.y;  
       
       bossCount1 += 1;
       if(bossCount1 == 20){
@@ -267,16 +268,18 @@ function init() {
       }
     }
 
-
+    //敵攻撃移動
     for(let n = 0; n < 20; n ++){
       Eattack [n].position.y += Math.sin(rad[n] + Math.PI * 3 / 2) / 5;
-      Eattack2 [n].position.y -= 0.4;
-      Eattack2 [n + 20].position.y -= 0.4;
+
+      
 
       Eattack2[n].rotation.x += 0.1 * param.rotation;
       Eattack2[n].rotation.y += 0.4 * param.rotation; 
       Eattack2[n + 20].rotation.x += 0.1 * param.rotation;
       Eattack2[n + 20].rotation.y += 0.4 * param.rotation;
+      Eattack2[n].position.y += Math.sin(angle2 % 45 * (Math.PI / 180) + Math.PI * 3 / 2) / 5;
+      Eattack2[n + 20].position.y += Math.sin(angle2 % 45 * (Math.PI / 180) + Math.PI * 3 / 2) / 5;
       
       
       // 玉1反射     
@@ -285,11 +288,26 @@ function init() {
       }else if(-wallupdown / 2 < Eattack [n].position.x && Eattack [n].position.x < wallupdown / 2){
         Eattack [n].position.x += Math.cos(rad[n] + Math.PI * 3 / 2) / 5;
       }else{
-        Eattack [n].position.x -= Math.cos(rad[n] + Math.PI * 3 / 2) / 5; 
-        wallcheck[n] = 1;        
-        Eattack [n].rotation.z -= 2 * rad[n] ;
-        
+        Eattack [n].position.x -= Math.cos(rad[n] + Math.PI * 3 / 2) / 5;
+        Eattack [n].rotation.z -= 2 * rad[n];  
+        wallcheck[n] = 1;              
       }
+
+      //玉2波状
+      if(wallcheck[n] == 1){
+        Eattack2 [n].position.x -= Math.cos(angle2 % 45 * (Math.PI / 180) + Math.PI * 3 / 2) / 5; 
+        Eattack2 [n + 20].position.x += Math.cos(angle2 % 45 * (Math.PI / 180) + Math.PI * 3 / 2) / 5;        
+      }else if(-wallupdown / 2 < Eattack2 [n].position.x && Eattack2 [n].position.x < wallupdown / 2){
+        
+      }else{
+        Eattack2 [n].position.x -= Math.cos(angle2 % 45 * (Math.PI / 180) + Math.PI * 3 / 2) / 5; 
+        wallcheck[n] = 1;        
+        Eattack2 [n].rotation.z -= 2 * rad[n] ;        
+      }
+      angle2 += 1;
+      
+      
+      
     }
 
 
