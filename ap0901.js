@@ -51,6 +51,7 @@ function init() {
     
   //内部作成 
   
+  
   //壁
   const wallside = 20;
   const wallupdown = 15;
@@ -95,16 +96,27 @@ function init() {
     scene.add(boss);
   
   //玉1
-
   const Eattack = [];
-  for(let n = 0; n < 5; n++){
+  for(let n = 0; n < 20; n++){
     Eattack.push(0);
     Eattack [n] = new THREE.Mesh(
       new THREE.ConeGeometry(0.3, 1, 4),
       new THREE.MeshPhongMaterial({ color: 0xaa40ff })
     );
-    Eattack [n].position.y = 1;
+    Eattack [n].position.y = 10;
     scene.add(Eattack[n]);
+  };
+
+  //玉2
+  const Eattack2 = [];
+  for(let n = 0; n < 40; n++){
+    Eattack2.push(0);
+    Eattack2 [n] = new THREE.Mesh(
+      new THREE.BoxGeometry(0.5, 0.5, 0.5),
+      new THREE.MeshPhongMaterial({ color: 0xa4eeff })
+    );
+    Eattack2 [n].position.y = -10;
+    scene.add(Eattack2[n]);
   };
 
 
@@ -165,8 +177,7 @@ function init() {
       new THREE.SphereGeometry(PattackR, nSeg, nSeg),
       new THREE.MeshPhongMaterial({ color: 0xaa40ff })
     );
-    Pattack [n].position.x = player.position.x;
-    Pattack [n].position.y = player.position.y + 2;
+    Pattack [n].position.y = 10;
     scene.add(Pattack[n]);
   };
 
@@ -202,6 +213,19 @@ function init() {
 
 
   // 描画処理
+  let bossTime = 0;
+  let bossCount1 = 0;
+  let bossCount2 = 0;
+  let angle = 0;
+  let rad = [];
+  let wallcheck = [];
+  let rad2 = 270;
+
+  for(let n = 0; n < 20; n++){
+    rad.push(180);
+    wallcheck.push(0);
+  };
+  
   
 
 
@@ -212,12 +236,70 @@ function init() {
     // 描画
     renderer.render(scene, camera);
 
+    //bossアクション
     boss.rotation.x += 0.01 * param.rotation;
     boss.rotation.y += 0.04 * param.rotation; 
+
+
+    if(bossTime% 8 == 0){
+      angle = Math.random() * 90 - 45;
+      rad [bossCount1]= angle * (Math.PI / 180);
+      Eattack [bossCount1].rotation.z =Math.PI;
+      Eattack [bossCount1].rotation.z += rad[bossCount1];
+      wallcheck[bossCount1] = 0;
+      Eattack [bossCount1].position.x = boss.position.x;
+      Eattack [bossCount1].position.y = boss.position.y + 2;  
+      
+      bossCount1 += 1;
+      if(bossCount1 == 20){
+        bossCount1 = 0;
+      }
+    }
+
+    if(bossTime% 4 == 0){
+      Eattack2 [bossCount2].position.x = boss.position.x + 1;
+      Eattack2 [bossCount2 + 20].position.x = boss.position.x - 1;
+      Eattack2 [bossCount2].position.y = boss.position.y;
+      Eattack2 [bossCount2 + 20].position.y = boss.position.y;
+      bossCount2 += 1;
+      if(bossCount2 == 20){
+        bossCount2 = 0;
+      }
+    }
+
+
+    for(let n = 0; n < 20; n ++){
+      Eattack [n].position.y += Math.sin(rad[n] + Math.PI * 3 / 2) / 5;
+      Eattack2 [n].position.y -= 0.4;
+      Eattack2 [n + 20].position.y -= 0.4;
+
+      Eattack2[n].rotation.x += 0.1 * param.rotation;
+      Eattack2[n].rotation.y += 0.4 * param.rotation; 
+      Eattack2[n + 20].rotation.x += 0.1 * param.rotation;
+      Eattack2[n + 20].rotation.y += 0.4 * param.rotation;
+      
+      
+      // 玉1反射     
+      if(wallcheck[n] == 1){
+        Eattack [n].position.x -= Math.cos(rad[n] + Math.PI * 3 / 2) / 5;         
+      }else if(-wallupdown / 2 < Eattack [n].position.x && Eattack [n].position.x < wallupdown / 2){
+        Eattack [n].position.x += Math.cos(rad[n] + Math.PI * 3 / 2) / 5;
+      }else{
+        Eattack [n].position.x -= Math.cos(rad[n] + Math.PI * 3 / 2) / 5; 
+        wallcheck[n] = 1;        
+        Eattack [n].rotation.z -= 2 * rad[n] ;
+        
+      }
+    }
+
+
+
     
     for(let n = 0; n < 5; n ++){
       Pattack [n].position.y += 0.4;
     }
+
+    bossTime += 1;
     
 
     
