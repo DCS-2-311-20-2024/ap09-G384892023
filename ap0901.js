@@ -7,7 +7,6 @@
 // ライブラリをモジュールとして読み込む
 import * as THREE from "three";
 import { GUI } from "ili-gui";
-import { MeshPhongMaterial } from 'three';
 
 // ３Ｄページ作成関数の定義
 function init() {
@@ -15,13 +14,16 @@ function init() {
   const param = {
     axes: true, // 座標軸
     rotation: 1,
-    
+    bosslife: 20,
+    playerlife: 3    
   };
 
   // GUIコントローラの設定
   const gui = new GUI();
   gui.add(param, "axes").name("座標軸");
   gui.add(param, "rotation", -10, 10);
+  gui.add(param, "bosslife", 20);
+  
   
 
 
@@ -50,7 +52,7 @@ function init() {
    scene.add(light);
     
   //内部作成 
-  
+  //画面内テキスト 
   
   //壁
   const wallside = 20;
@@ -119,8 +121,6 @@ function init() {
     scene.add(Eattack2[n]);
   };
 
-
-
   //player当たり判定の確認
   
   const nSeg = 24;
@@ -165,8 +165,6 @@ function init() {
 
   window.addEventListener("mousemove", playerMove, false);
 
-    
-  
 
   //攻撃
   const PattackR = 0.2;
@@ -233,9 +231,11 @@ function init() {
     rad2.push(180);
     wallcheck2.push(0);
   };
-  
-  
 
+
+
+
+  
 
   // 描画関数
   function render() {
@@ -273,7 +273,6 @@ function init() {
       Eattack2 [bossCount2].position.y = boss.position.y;
       Eattack2 [60 - bossCount2 - 1].position.y = boss.position.y;
       wallcheck2[60 - bossCount2 - 1] = 0;
-      console.log(bossCount2);
 
       if(checkangle2){
         angle2 += 5;
@@ -308,6 +307,14 @@ function init() {
         Eattack [n].rotation.z -= 2 * rad[n];  
         wallcheck[n] = 1;              
       }
+      if(Eattack [n].position.x + 0.25 > player.position.x && Eattack [n].position.x - 0.25 < player.position.x && Eattack [n].position.y + 0.25 > player.position.y && Eattack [n].position.y - 0.25 < player.position.y){
+        player.visible = false;
+        Pattack[0].visible = false;
+        Pattack[1].visible = false;
+        Pattack[2].visible = false;
+        Pattack[3].visible = false;
+        Pattack[4].visible = false;
+      }
     }
 
     //敵攻撃2
@@ -329,6 +336,23 @@ function init() {
       }else{
         wallcheck2[n] = 1;              
       }
+
+      if(Eattack2 [n].position.x + 0.25 > player.position.x && Eattack2 [n].position.x - 0.25 < player.position.x && Eattack2 [n].position.y + 0.25 > player.position.y && Eattack2 [n].position.y - 0.25 < player.position.y){
+        player.visible = false;
+        Pattack[0].visible = false;
+        Pattack[1].visible = false;
+        Pattack[2].visible = false;
+        Pattack[3].visible = false;
+        Pattack[4].visible = false;
+      }
+      if(Eattack2 [60 - n - 1].position.x + 0.25 > player.position.x && Eattack2 [60 - n - 1].position.x - 0.25 < player.position.x && Eattack2 [60 - n - 1].position.y + 0.25 > player.position.y && Eattack2 [60 - n - 1].position.y - 0.25 < player.position.y){
+        player.visible = false;
+        Pattack[0].visible = false;
+        Pattack[1].visible = false;
+        Pattack[2].visible = false;
+        Pattack[3].visible = false;
+        Pattack[4].visible = false;
+      }
     }
 
 
@@ -339,9 +363,8 @@ function init() {
     }
 
     bossTime += 1;
-    
 
-    
+
 
     // 次のフレームでの描画要請
     requestAnimationFrame(render); 
