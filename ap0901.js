@@ -200,7 +200,8 @@ function init() {
     console.log("shoot");
     if(time%2 == 0){
       Pattack [count].position.x = player.position.x;
-      Pattack [count].position.y = player.position.y + 2;     
+      Pattack [count].position.y = player.position.y + 2;   
+      hitcheck1[count] = 0;  
       count += 1;
       if(count == 5){
         count = 0;
@@ -221,6 +222,12 @@ function init() {
   let wallcheck = [];
   let rad2 = [];
   let wallcheck2 = [];
+  let hitcheck1 = [];
+  let bosslife = 20;
+
+  for(let n = 0; n < 5; n++){
+    hitcheck1.push(0);
+  };
 
   for(let n = 0; n < 30; n++){
     rad.push(180);
@@ -309,11 +316,9 @@ function init() {
       }
       if(Eattack [n].position.x + 0.25 > player.position.x && Eattack [n].position.x - 0.25 < player.position.x && Eattack [n].position.y + 0.25 > player.position.y && Eattack [n].position.y - 0.25 < player.position.y){
         player.visible = false;
-        Pattack[0].visible = false;
-        Pattack[1].visible = false;
-        Pattack[2].visible = false;
-        Pattack[3].visible = false;
-        Pattack[4].visible = false;
+        for(let m = 0; m < 5; m++){
+          Pattack[m].visible = false;
+        }
       }
     }
 
@@ -339,19 +344,31 @@ function init() {
 
       if(Eattack2 [n].position.x + 0.25 > player.position.x && Eattack2 [n].position.x - 0.25 < player.position.x && Eattack2 [n].position.y + 0.25 > player.position.y && Eattack2 [n].position.y - 0.25 < player.position.y){
         player.visible = false;
-        Pattack[0].visible = false;
-        Pattack[1].visible = false;
-        Pattack[2].visible = false;
-        Pattack[3].visible = false;
-        Pattack[4].visible = false;
+        for(let m = 0; m < 5; m++){
+          Pattack[m].visible = false;
+        }
       }
       if(Eattack2 [60 - n - 1].position.x + 0.25 > player.position.x && Eattack2 [60 - n - 1].position.x - 0.25 < player.position.x && Eattack2 [60 - n - 1].position.y + 0.25 > player.position.y && Eattack2 [60 - n - 1].position.y - 0.25 < player.position.y){
         player.visible = false;
-        Pattack[0].visible = false;
-        Pattack[1].visible = false;
-        Pattack[2].visible = false;
-        Pattack[3].visible = false;
-        Pattack[4].visible = false;
+        for(let m = 0; m < 5; m++){
+          Pattack[m].visible = false;
+        }
+      }
+      for(let m = 0; m < 5; m++){
+        if(Pattack [m].position.x + 0.55 > boss.position.x && Pattack [m].position.x - 0.55 < boss.position.x && Pattack [m].position.y + 0.55 > boss.position.y && Pattack [m].position.y - 0.55 < boss.position.y && hitcheck1[m] == 0 && player.visible == true){
+          bosslife -= 1;
+          hitcheck1[m] = 1;
+          console.log(" ");
+          if(bosslife == 0){
+            boss.visible = false;
+            for(let j = 0; j < 60; j++){
+              Eattack2[j].visible = false;
+              if(j<30){
+                Eattack[j].visible = false;
+              }
+            }
+          }
+        }
       }
     }
 
