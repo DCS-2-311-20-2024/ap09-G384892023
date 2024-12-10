@@ -89,7 +89,7 @@ function init() {
 
   //ボス 
     const boss = new THREE.Mesh(
-      new THREE.IcosahedronGeometry(1,0),
+      new THREE.IcosahedronGeometry(1.2,0),
       new THREE.MeshPhongMaterial({ color: 0xffa0ff })
     );
     boss.position.y = 6;
@@ -97,7 +97,7 @@ function init() {
   
   //玉1
   const Eattack = [];
-  for(let n = 0; n < 20; n++){
+  for(let n = 0; n < 30; n++){
     Eattack.push(0);
     Eattack [n] = new THREE.Mesh(
       new THREE.ConeGeometry(0.3, 1, 4),
@@ -109,7 +109,7 @@ function init() {
 
   //玉2
   const Eattack2 = [];
-  for(let n = 0; n < 40; n++){
+  for(let n = 0; n < 60; n++){
     Eattack2.push(0);
     Eattack2 [n] = new THREE.Mesh(
       new THREE.BoxGeometry(0.5, 0.5, 0.5),
@@ -175,7 +175,7 @@ function init() {
     Pattack.push(0);
     Pattack [n] = new THREE.Mesh(
       new THREE.SphereGeometry(PattackR, nSeg, nSeg),
-      new THREE.MeshPhongMaterial({ color: 0xaa40ff })
+      new THREE.MeshPhongMaterial({ color: 0xff0088 })
     );
     Pattack [n].position.y = 10;
     scene.add(Pattack[n]);
@@ -216,15 +216,22 @@ function init() {
   let bossTime = 0;
   let bossCount1 = 0;
   let bossCount2 = 0;
+  let checkangle2 = true;
   let angle = 0;
   let angle2 = 0;
   let rad = [];
   let wallcheck = [];
-  let rad2 = 270;
+  let rad2 = [];
+  let wallcheck2 = [];
 
-  for(let n = 0; n < 20; n++){
+  for(let n = 0; n < 30; n++){
     rad.push(180);
     wallcheck.push(0);
+  };
+
+  for(let n = 0; n < 60; n++){
+    rad2.push(180);
+    wallcheck2.push(0);
   };
   
   
@@ -241,8 +248,9 @@ function init() {
     boss.rotation.x += 0.01 * param.rotation;
     boss.rotation.y += 0.04 * param.rotation; 
 
-
-    if(bossTime% 8 == 0){
+    //敵攻撃初期情報
+    //敵攻撃1
+    if(bossTime% 4 == 0){
       angle = Math.random() * 90 - 45;
       rad [bossCount1]= angle * (Math.PI / 180);
       Eattack [bossCount1].rotation.z =Math.PI;
@@ -252,35 +260,44 @@ function init() {
       Eattack [bossCount1].position.y = boss.position.y;  
       
       bossCount1 += 1;
-      if(bossCount1 == 20){
+      if(bossCount1 == 30){
         bossCount1 = 0;
       }
     }
 
-    if(bossTime% 4 == 0){
+    //敵攻撃2
+    if(bossTime% 10 == 0){
       Eattack2 [bossCount2].position.x = boss.position.x + 1;
-      Eattack2 [bossCount2 + 20].position.x = boss.position.x - 1;
+      Eattack2 [60 - bossCount2 - 1].position.x = boss.position.x - 1;
+      wallcheck2[bossCount2] = 0;
       Eattack2 [bossCount2].position.y = boss.position.y;
-      Eattack2 [bossCount2 + 20].position.y = boss.position.y;
+      Eattack2 [60 - bossCount2 - 1].position.y = boss.position.y;
+      wallcheck2[60 - bossCount2 - 1] = 0;
+      console.log(bossCount2);
+
+      if(checkangle2){
+        angle2 += 5;
+        if(angle2 == 90){
+          checkangle2 = false;
+        }
+      }else{
+        angle2 -= 5;
+        if(angle2 == 0){
+          checkangle2 = true;
+        }
+      }
+
+      rad2 [bossCount2]= (225 + angle2) * (Math.PI / 180);
       bossCount2 += 1;
-      if(bossCount2 == 20){
+      if(bossCount2 == 30){
         bossCount2 = 0;
       }
     }
 
     //敵攻撃移動
-    for(let n = 0; n < 20; n ++){
+    //敵攻撃1
+    for(let n = 0; n < 30; n ++){
       Eattack [n].position.y += Math.sin(rad[n] + Math.PI * 3 / 2) / 5;
-
-      
-
-      Eattack2[n].rotation.x += 0.1 * param.rotation;
-      Eattack2[n].rotation.y += 0.4 * param.rotation; 
-      Eattack2[n + 20].rotation.x += 0.1 * param.rotation;
-      Eattack2[n + 20].rotation.y += 0.4 * param.rotation;
-      Eattack2[n].position.y += Math.sin(angle2 % 45 * (Math.PI / 180) + Math.PI * 3 / 2) / 5;
-      Eattack2[n + 20].position.y += Math.sin(angle2 % 45 * (Math.PI / 180) + Math.PI * 3 / 2) / 5;
-      
       
       // 玉1反射     
       if(wallcheck[n] == 1){
@@ -288,26 +305,30 @@ function init() {
       }else if(-wallupdown / 2 < Eattack [n].position.x && Eattack [n].position.x < wallupdown / 2){
         Eattack [n].position.x += Math.cos(rad[n] + Math.PI * 3 / 2) / 5;
       }else{
-        Eattack [n].position.x -= Math.cos(rad[n] + Math.PI * 3 / 2) / 5;
         Eattack [n].rotation.z -= 2 * rad[n];  
         wallcheck[n] = 1;              
       }
+    }
+
+    //敵攻撃2
+    for(let n = 0; n < 30; n ++){
+      Eattack2[n].rotation.x += 0.1 * param.rotation;
+      Eattack2[n].rotation.y += 0.4 * param.rotation; 
+      Eattack2[n].position.y += Math.sin(rad2 [n]) / 4;
+      Eattack2[60 - n - 1].rotation.x += 0.1 * param.rotation;
+      Eattack2[60 - n - 1].rotation.y += 0.4 * param.rotation; 
+      Eattack2[60 - n - 1].position.y += Math.sin(rad2 [n]) / 4;
 
       //玉2波状
-      if(wallcheck[n] == 1){
-        Eattack2 [n].position.x -= Math.cos(angle2 % 45 * (Math.PI / 180) + Math.PI * 3 / 2) / 5; 
-        Eattack2 [n + 20].position.x += Math.cos(angle2 % 45 * (Math.PI / 180) + Math.PI * 3 / 2) / 5;        
+      if(wallcheck2[n] == 1){
+        Eattack2 [n].position.x -= Math.cos(rad2 [n]) / 5;    
+        Eattack2 [60 - n - 1].position.x += Math.cos(rad2 [n]) / 5;     
       }else if(-wallupdown / 2 < Eattack2 [n].position.x && Eattack2 [n].position.x < wallupdown / 2){
-        
+        Eattack2 [n].position.x += Math.cos(rad2 [n]) / 5; 
+        Eattack2 [60 - n - 1].position.x -= Math.cos(rad2 [n]) / 5;  
       }else{
-        Eattack2 [n].position.x -= Math.cos(angle2 % 45 * (Math.PI / 180) + Math.PI * 3 / 2) / 5; 
-        wallcheck[n] = 1;        
-        Eattack2 [n].rotation.z -= 2 * rad[n] ;        
+        wallcheck2[n] = 1;              
       }
-      angle2 += 1;
-      
-      
-      
     }
 
 
