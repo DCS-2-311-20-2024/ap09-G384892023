@@ -184,6 +184,9 @@ function init() {
     if (event.key === ' ') { // スペースキーが押されたとき
         shoot(); 
     }
+    if(event.key === 'r'){ // rキーが押されたとき
+        location.reload();
+    }
   });
 
   // キーが離されたときの処理
@@ -314,7 +317,7 @@ function init() {
         Eattack [n].rotation.z -= 2 * rad[n];  
         wallcheck[n] = 1;              
       }
-      if(Eattack [n].position.x + 0.25 > player.position.x && Eattack [n].position.x - 0.25 < player.position.x && Eattack [n].position.y + 0.25 > player.position.y && Eattack [n].position.y - 0.25 < player.position.y){
+      if(Eattack [n].position.x + 0.25 > player.position.x && Eattack [n].position.x - 0.25 < player.position.x && Eattack [n].position.y + 0.25 > player.position.y && Eattack [n].position.y - 0.25 < player.position.y && boss.visible == true){
         player.visible = false;
         for(let m = 0; m < 5; m++){
           Pattack[m].visible = false;
@@ -342,13 +345,13 @@ function init() {
         wallcheck2[n] = 1;              
       }
 
-      if(Eattack2 [n].position.x + 0.25 > player.position.x && Eattack2 [n].position.x - 0.25 < player.position.x && Eattack2 [n].position.y + 0.25 > player.position.y && Eattack2 [n].position.y - 0.25 < player.position.y){
+      if(Eattack2 [n].position.x + 0.25 > player.position.x && Eattack2 [n].position.x - 0.25 < player.position.x && Eattack2 [n].position.y + 0.25 > player.position.y && Eattack2 [n].position.y - 0.25 < player.position.y && boss.visible == true){
         player.visible = false;
         for(let m = 0; m < 5; m++){
           Pattack[m].visible = false;
         }
       }
-      if(Eattack2 [60 - n - 1].position.x + 0.25 > player.position.x && Eattack2 [60 - n - 1].position.x - 0.25 < player.position.x && Eattack2 [60 - n - 1].position.y + 0.25 > player.position.y && Eattack2 [60 - n - 1].position.y - 0.25 < player.position.y){
+      if(Eattack2 [60 - n - 1].position.x + 0.25 > player.position.x && Eattack2 [60 - n - 1].position.x - 0.25 < player.position.x && Eattack2 [60 - n - 1].position.y + 0.25 > player.position.y && Eattack2 [60 - n - 1].position.y - 0.25 < player.position.y && boss.visible == true){
         player.visible = false;
         for(let m = 0; m < 5; m++){
           Pattack[m].visible = false;
