@@ -15,12 +15,14 @@ function init() {
     axes: true, // 座標軸
     rotation: 1,
     bosslife: 20,
+    density: 1,
   };
 
   // GUIコントローラの設定
   const gui = new GUI();
   gui.add(param, "axes").name("座標軸");
   gui.add(param, "rotation", -10, 10);
+  gui.add(param, "density");
 
   
   
@@ -259,7 +261,7 @@ function init() {
 
     //敵攻撃初期情報
     //敵攻撃1
-    if(bossTime% 4 == 0){
+    if(bossTime% (4 * param.density) == 0){
       angle = Math.random() * 90 - 45;
       rad [bossCount1]= angle * (Math.PI / 180);
       Eattack [bossCount1].rotation.z =Math.PI;
@@ -275,7 +277,7 @@ function init() {
     }
 
     //敵攻撃2
-    if(bossTime% 10 == 0){
+    if(bossTime% (10 * param.density) == 0){
       Eattack2 [bossCount2].position.x = boss.position.x + 1;
       Eattack2 [60 - bossCount2 - 1].position.x = boss.position.x - 1;
       wallcheck2[bossCount2] = 0;
