@@ -15,14 +15,13 @@ function init() {
     axes: true, // 座標軸
     rotation: 1,
     bosslife: 20,
-    playerlife: 3    
   };
 
   // GUIコントローラの設定
   const gui = new GUI();
   gui.add(param, "axes").name("座標軸");
   gui.add(param, "rotation", -10, 10);
-  gui.add(param, "bosslife", 20);
+
   
   
 
